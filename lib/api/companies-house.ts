@@ -144,7 +144,7 @@ export async function companiesHouseDetail(
         date: f.date ?? "",
         form: f.type ?? null,
         url: f.links?.self ? `https://find-and-update.company-information.service.gov.uk${f.links.self}` : null,
-        source: "companies-house",
+        source: "companies-house" as const,
       })).filter((f) => f.date);
 
       return {

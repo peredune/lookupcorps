@@ -50,7 +50,7 @@ export async function edgarSearch(query: string, limit = 8): Promise<SearchHit[]
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
 
-  return scored.map(({ r }) => ({
+  return scored.map(({ r }): SearchHit => ({
     id: edgarId(r.ticker),
     name: r.title,
     ticker: r.ticker,
@@ -140,7 +140,7 @@ export async function edgarDetail(ticker: string): Promise<CompanyDetail | null>
               acc && primary
                 ? `https://www.sec.gov/Archives/edgar/data/${row.cik_str}/${acc}/${primary}`
                 : `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${pad10(row.cik_str)}&type=${form}`,
-            source: "edgar",
+            source: "edgar" as const,
           });
         }
       }
@@ -163,7 +163,7 @@ export async function edgarDetail(ticker: string): Promise<CompanyDetail | null>
         jurisdictionLabel: s.stateOfIncorporation
           ? `United States (${s.stateOfIncorporation})`
           : "United States",
-        status: "active",
+        status: "active" as const,
         companyNumber: pad10(row.cik_str),
         cik: pad10(row.cik_str),
         ticker: row.ticker,
