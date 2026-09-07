@@ -11,7 +11,8 @@ type CacheDriver = {
 
 // ---------- In-memory LRU (Node-scoped, per-process) ----------
 
-const lru = new LRUCache<string, unknown>({
+// LRUCache v11 requires value type to satisfy `{}`; use `object` and cast at the boundaries.
+const lru = new LRUCache<string, object>({
   max: 1000,
   ttl: DEFAULT_TTL_SECONDS * 1000,
   updateAgeOnGet: false,
@@ -24,7 +25,9 @@ const memoryDriver: CacheDriver = {
     return (v as T | undefined) ?? null;
   },
   async set(key, value, ttlSeconds = DEFAULT_TTL_SECONDS) {
-    lru.set(key, value, { ttl: ttlSeconds * 1000 });
+    // Skip primitives; LRUCache expects an object-typed value.
+    if (value === null || value === undefined || typeof value !== "object") return;
+    lru.set(key, value as object, { ttl: ttlSeconds * 1000 });
   },
 };
 
